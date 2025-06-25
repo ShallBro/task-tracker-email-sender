@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaListenerService {
 
+  private final MailService mailService;
   private static final Logger LOGGER = LoggerFactory.getLogger(lookup().lookupClass());
 
   @KafkaListener(topics = EMAIL_SENDING_TASKS, groupId = "email_sender")
   public void onEmailTask(EmailTaskDTO msg) {
-    LOGGER.info("EmailTask body {}", msg);
+    LOGGER.info("EmailTask body to: {}, body: {}, subject: {}", msg.getTo(), msg.getBody(), msg.getSubject());
+    mailService.sendMail(msg);
   }
 }

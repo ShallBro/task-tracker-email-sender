@@ -1,0 +1,31 @@
+spring:
+  config:
+    import: optional:dotenv:.
+  mail:
+    host: smtp.sendgrid.net
+    port: 587
+    username: apikey
+    password: ${MAILJET_SECRET_KEY}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.type.mapping: "org.example.task_tracker_backend.dto.EmailTaskDTO:org.example.task_tracker_email_sender.dto.EmailTaskDTO"
+        spring.json.trusted.packages: org.example.task_tracker_email_sender.dto
+      group-id: email_sender
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    bootstrap-servers: localhost:9092
+  application:
+    name: task-tracker-email-sender
+server:
+  port: 8000
+logging:
+  level:
+    org.apache.kafka: WARN
+    kafka: WARN
